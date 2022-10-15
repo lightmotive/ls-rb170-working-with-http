@@ -1,1 +1,1 @@
-# ls-rb170-working-with-http
+# Launch School Course RB170/Working with HTTP
