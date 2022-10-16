@@ -1,12 +1,13 @@
 #!/bin/bash
 
-eat_chocolate=true
+echo -n 'Chocolate? '
+read eat_chocolate
 
-if [[ $eat_chocolate == true ]]
+if [[ $eat_chocolate == y* ]]
 then
   echo 'Yum!'
 else
-  echo 'Why not?!'
+  echo 'Are you feeling OK?'
 fi
 
 string='Hello'
