@@ -13,6 +13,7 @@ do
   printf $letter
 done
 echo
+echo {a..z}
 
 for fixnum in {01..10}
 do
