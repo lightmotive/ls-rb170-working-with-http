@@ -11,7 +11,7 @@ fi
 # Equality:
 integer1=10
 integer2=10
-if [[ $integer1 -eq $integer2 ]]
+if [[ $integer1 == $integer2 ]]
 then
   echo $integer1 and $integer2 are the same!
 fi
@@ -24,7 +24,7 @@ fi
 
 # One condition, otherwise ...:
 integer=15
-if [[ $integer -lt 10 ]]
+if [[ $integer < 10 ]]
 then
   echo $integer is less than 10
 else
@@ -33,10 +33,10 @@ fi
 
 # Multiple tests:
 integer=15
-if [ $integer -lt 10 ]
+if [[ $integer < 10 ]]
 then
   echo $integer is less than 10
-elif [[ $integer -gt 20 ]]
+elif [[ $integer > 20 ]]
 then
   echo $integer is greater than 20
 else
@@ -52,14 +52,14 @@ fi
 
 # At least one condition is true:
 integer=12
-if ([ $integer -lt 5 ]) || [ $integer -gt 10 ]
+if ([[ $integer < 5 ]]) || [[ $integer > 10 ]]
 then
   echo $integer is less than 5 or greater than 10.
 fi
 
 # Not:
 integer=8
-if !([ $integer -lt 5 ] || [ $integer -gt 10 ])
+if !([[ $integer -lt 5 ]] || [[ $integer -gt 10 ]])
 then
   echo $integer is between 5 and 10.
 fi  
