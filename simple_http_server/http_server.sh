@@ -44,7 +44,7 @@ function get_response () {
 
   local message_body=$(resource_content $resource_path)
 
-  printf "$start_line\r\n\r\n$message_body\r\n\r\n"
+  echo -ne "$start_line\r\n\r\n$message_body\r\n\r\n"
 }
 
 function server () {
