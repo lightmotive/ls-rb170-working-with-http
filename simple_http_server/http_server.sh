@@ -20,18 +20,11 @@ function resource_content () {
 }
 
 function get_response () {
-  local request_method=$1
-  local request_path=$2
-  local request_version=$3
+  local message_arr=("$@")
+  local request_method="${message_arr[0]}"
+  local request_path="${message_arr[1]}"
+  local request_version="${message_arr[2]}"
   local resource_path=$(resource_path_by_request_path $request_path)
-
-  if [[ -z $request_version ]]
-  then
-    request_version="HTTP/1.1"
-  fi
-  # TODO: validate version
-  # TODO: customize response for request version
-
   local start_line="$request_version"
 
   if [[ -f $resource_path ]]
@@ -47,15 +40,47 @@ function get_response () {
   echo -ne "$start_line\r\n\r\n$message_body\r\n\r\n"
 }
 
+function standardize_request_first_line () {
+  local components=($1)
+  local request_method="${components[0]}"
+  local request_path="${components[1]}"
+  local request_version="${components[2]}"
+
+  # Support HTTP/[1.0, 1.1] only for now:
+  if !([[ "$request_version" =~ ^HTTP\/[1][.][01]$ ]])
+  then
+    request_version="HTTP/1.1"
+  fi
+  # TODO: validate version
+  # TODO: customize response for request version
+
+  echo "$request_method $request_path $request_version"
+}
+
 function server () {
   while true
   do
-    read method path version
-    # 
+    local message_arr=()
+    read first_line
+    first_line=$(standardize_request_first_line "$first_line")
+    message_arr+=($first_line)
 
-    if [[ $method == 'GET' ]]
+    local request_incoming=true
+    while $request_incoming
+    do
+      read line
+      if [[ "${#line}" -eq 1 ]]
+      then
+        request_incoming=false
+      else
+        message_arr+=($line)
+      fi
+    done
+    local request_method="${message_arr[0]}"
+
+    if [[ $request_method == 'GET' ]]
     then
-      get_response $method $path $version
+      get_response "${message_arr[@]}"
     else
       echo "HTTP/1.1 400 Bad Request"
     fi
