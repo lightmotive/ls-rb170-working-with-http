@@ -19,7 +19,7 @@ function resource_content () {
   cat $1
 }
 
-function get_response () {
+function send_content () {
   local message_arr=("$@")
   local request_method="${message_arr[0]}"
   local request_path="${message_arr[1]}"
@@ -37,7 +37,11 @@ function get_response () {
 
   local message_body=$(resource_content $resource_path)
 
-  echo -ne "$start_line\r\n\r\n$message_body\r\n\r\n"
+  # Send:
+  echo -ne "$start_line\r\n"
+  echo -ne "Content-Length: $(wc -c < $resource_path)\r\n"
+  echo -ne "Content-Type: text/html; charset=utf-8\r\n"
+  echo -ne "\r\n$message_body\r\n"
 }
 
 function standardize_request_first_line () {
@@ -80,9 +84,10 @@ function server () {
 
     if [[ $request_method == 'GET' ]]
     then
-      get_response "${message_arr[@]}"
+      send_content "${message_arr[@]}"
     else
-      echo "HTTP/1.1 400 Bad Request"
+      echo -ne "HTTP/1.1 400 Bad Request\r\n"
+      echo -ne "Content-Length: 0\r\n"
     fi
   done
 }
